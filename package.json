@@ -1,6 +1,6 @@
 {
   "name": "hexlet-level2-ya-package",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "my hexlet course 2",
   "main": "dist/index.js",
   "scripts": {
