@@ -1,6 +1,7 @@
 #!/usr/bin/env nodejs
 
 import program from 'commander';
+import gendiff from '..';
 
 program
   .version('0.0.1')
@@ -8,6 +9,6 @@ program
   .arguments('<firstConfig> <secondConfig>')
   .option('-f, --format [type]', 'Output format', 'json')
   .action((file1, file2) => {
-    console.log(`Заглушка: ${file1}, ${file2}`);
+    gendiff(file1, file2);
   })
   .parse(process.argv);
