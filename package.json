@@ -10,14 +10,14 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "task": "dist/bin/task.js"
+    "gendiff": "dist/bin/gendiff.js"
   },
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Badasper/project-lvl2-s169.git"
+    "url": "https://github.com/Badasper/project-lvl2-s169"
   },
   "author": "Alexander Yakovlev",
   "license": "ISC",
@@ -35,5 +35,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "commander": "*"
+  }
 }
