@@ -2,11 +2,13 @@ install:
 	npm install 
 
 gendiff:
-	npm run babel-node -- src/bin/gendiff.js -h
-	npm run babel-node -- src/bin/gendiff.js file1 file2
+	npm run babel-node -- src/bin/gendiff.js src/__tests__/before.json src/__tests__/after.json
 
 publish:
 	npm publish
 
 lint:
 	npm run eslint .
+
+test:
+	npm test -- --watchAll

@@ -3,4 +3,5 @@
 
 
 ## Hexlet level 2
-### Add cli commander.
+### Add cli commander step1 -- pass.
+### Add gendiff step2
