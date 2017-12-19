@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+const eol = '\n';
+
 export const readConfigFile = (pathToFile) => {
   const dataFile = fs.readFileSync(pathToFile, 'utf-8', (err, data) => {
     if (err) throw err;
@@ -9,7 +11,7 @@ export const readConfigFile = (pathToFile) => {
 };
 
 const makeRow = (property, obj, sign) =>
-  `${sign} ${property}: ${obj[property]}\n`;
+  `${sign} ${property}: ${obj[property]}${eol}`;
 
 export const getNewProperty = (objBefore, objAfter) => {
   const properties = Object.keys(objAfter);
@@ -58,8 +60,8 @@ export const makeDiff = (filePathBefore, filePathAfter) => {
   const changedProp = getMofifiedProperty(dataBefore, dataAfter);
   const deletedProp = getDeletedProperty(dataBefore, dataAfter);
   const newProp = getNewProperty(dataBefore, dataAfter);
-  return `{\n${equalProp}${changedProp}${deletedProp}${newProp}}`;
+  return `{${eol}${equalProp}${changedProp}${deletedProp}${newProp}}`;
 };
 
 export default (filePathBefore, filePathAfter) =>
-  console.log(makeDiff(filePathBefore, filePathAfter));
+  makeDiff(filePathBefore, filePathAfter);

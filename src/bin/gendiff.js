@@ -9,6 +9,6 @@ program
   .arguments('<firstConfig> <secondConfig>')
   .option('-f, --format [type]', 'Output format', 'json')
   .action((file1, file2) => {
-    gendiff(file1, file2);
+    console.log(gendiff(file1, file2));
   })
   .parse(process.argv);
