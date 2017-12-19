@@ -3,9 +3,9 @@ import { readConfigFile,
   getEqualProperty,
   getMofifiedProperty,
   getDeletedProperty,
-  makeDiff } from '..';
+  makeDiff } from '../src';
 
-const pathToFile = `${__dirname}/testRead.json`;
+const pathToFile = '__tests__/__fixtures__/testRead.json';
 test('read data from json file to obj', () => {
   expect(readConfigFile(pathToFile)).toEqual({ test: 'test' });
 });
@@ -33,8 +33,8 @@ const answer = `{
 - proxy: 123.234.53.22
 + verbose: true
 }`;
-const pathBefore = 'src/__tests__/before.json';
-const pathAfter = 'src/__tests__/after.json';
+const pathBefore = '__tests__/__fixtures__/before.json';
+const pathAfter = '__tests__/__fixtures__/after.json';
 
 test('find difference in file', () => {
   expect(makeDiff(pathBefore, pathAfter)).toBe(answer);
