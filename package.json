@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "commander": "*",
-    "fs": "*"
+    "fs": "*",
+    "lodash": "*"
   }
 }

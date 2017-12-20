@@ -1,67 +1,61 @@
 import fs from 'fs';
+import _ from 'lodash';
 
 const eol = '\n';
+const intend = '  ';
 
-export const readConfigFile = (pathToFile) => {
-  const dataFile = fs.readFileSync(pathToFile, 'utf-8', (err, data) => {
-    if (err) throw err;
-    return data;
-  });
+const readConfigFile = (pathToFile) => {
+  const dataFile = fs.readFileSync(pathToFile, 'utf-8');
   return JSON.parse(dataFile);
 };
 
 const makeRow = (property, obj, sign) =>
-  `${sign} ${property}: ${obj[property]}${eol}`;
+  `${intend}${sign} ${property}: ${obj[property]}${eol}`;
 
-export const getNewProperty = (objBefore, objAfter) => {
-  const properties = Object.keys(objAfter);
-  return properties.reduce((acc, property) => {
-    if (objAfter[property] && !objBefore[property]) {
-      return acc + makeRow(property, objAfter, '+');
+const isNewProperty = (objBefore, objAfter, property) =>
+  (objAfter[property] && !objBefore[property]);
+
+const isEqualProperty = (objBefore, objAfter, property) =>
+  (objBefore[property] === objAfter[property]);
+
+const isMofifiedProperty = (objBefore, objAfter, property) =>
+  (objBefore[property] && objAfter[property] && objBefore[property] !== objAfter[property]);
+
+const isDeletedProperty = (objBefore, objAfter, property) =>
+  (objBefore[property] && !objAfter[property]);
+
+export const makeDiff = (configBefore, configAfter) => {
+  const objBefore = readConfigFile(configBefore);
+  const objAfter = readConfigFile(configAfter);
+  const properties = _.union(Object.keys(objBefore), Object.keys(objAfter));
+  const output = properties.reduce((acc, property) => {
+    if (isNewProperty(objBefore, objAfter, property)) {
+      return `${acc}${makeRow(property, objAfter, '+')}`;
+    }
+    if (isEqualProperty(objBefore, objAfter, property)) {
+      return `${acc}${makeRow(property, objBefore, ' ')}`;
+    }
+    if (isMofifiedProperty(objBefore, objAfter, property)) {
+      return `${acc}${makeRow(property, objAfter, '+')}${makeRow(property, objBefore, '-')}`;
+    }
+    if (isDeletedProperty(objBefore, objAfter, property)) {
+      return `${acc}${makeRow(property, objBefore, '-')}`;
     }
     return acc;
   }, '');
+  return `{${eol}${output}}`;
 };
 
-export const getEqualProperty = (objBefore, objAfter) => {
-  const properties = Object.keys(objBefore);
-  return properties.reduce((acc, property) => {
-    if (objBefore[property] === objAfter[property]) {
-      return acc + makeRow(property, objBefore, ' ');
-    }
-    return acc;
-  }, '');
+// for tests:
+export {
+  isDeletedProperty,
+  isMofifiedProperty,
+  isEqualProperty,
+  isNewProperty,
+  makeRow,
+  readConfigFile,
 };
-
-export const getMofifiedProperty = (objBefore, objAfter) => {
-  const properties = Object.keys(objAfter);
-  return properties.reduce((acc, property) => {
-    if (objBefore[property] && objBefore[property] !== objAfter[property]) {
-      return acc + makeRow(property, objAfter, '+') + makeRow(property, objBefore, '-');
-    }
-    return acc;
-  }, '');
-};
-
-export const getDeletedProperty = (objBefore, objAfter) => {
-  const properties = Object.keys(objBefore);
-  return properties.reduce((acc, property) => {
-    if (objBefore[property] && !objAfter[property]) {
-      return acc + makeRow(property, objBefore, '-');
-    }
-    return acc;
-  }, '');
-};
-
-export const makeDiff = (filePathBefore, filePathAfter) => {
-  const dataBefore = readConfigFile(filePathBefore);
-  const dataAfter = readConfigFile(filePathAfter);
-  const equalProp = getEqualProperty(dataBefore, dataAfter);
-  const changedProp = getMofifiedProperty(dataBefore, dataAfter);
-  const deletedProp = getDeletedProperty(dataBefore, dataAfter);
-  const newProp = getNewProperty(dataBefore, dataAfter);
-  return `{${eol}${equalProp}${changedProp}${deletedProp}${newProp}}`;
-};
+// tests
 
 export default (filePathBefore, filePathAfter) =>
   makeDiff(filePathBefore, filePathAfter);
