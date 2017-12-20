@@ -1,31 +1,8 @@
-import {
-  // readConfigFile,
-  // isNewProperty,
-  // isEqualProperty,
-  // isMofifiedProperty,
-  // isDeletedProperty,
-  makeDiff } from '../src';
+import { makeDiff } from '../src';
 
-// const pathToFile = '__tests__/__fixtures__/testRead.json';
-// test('read data from json file to obj', () => {
-//   expect(readConfigFile(pathToFile)).toEqual({ test: 'test' });
-// });
-
-// test('find new properties', () => {
-//   expect(isNewProperty({ before: 'before' }, { after: 'after' }, 'after')).toBe(true);
-// });
-
-// test('find changed properties', () => {
-//   expect(isMofifiedProperty({ prop: 'before' }, { prop: 'after' }, 'prop')).toBe(true);
-// });
-
-// test('find equal properties', () => {
-//   expect(isEqualProperty({ prop: 'before' }, { prop: 'before' }, 'prop')).toBe(true);
-// });
-
-// test('find deleted properties', () => {
-//   expect(isDeletedProperty({ prop1: 'before1', prop2: 'before2' }, { prop1: 'before1' }, 'prop2')).toBe(true);
-// });
+const pathBefore = '__tests__/__fixtures__/before.json';
+const pathAfter = '__tests__/__fixtures__/after.json';
+const pathEmptyFile = '__tests__/__fixtures__/empty.json';
 
 const answer1 = `{
     host: hexlet.io
@@ -34,17 +11,13 @@ const answer1 = `{
   - proxy: 123.234.53.22
   + verbose: true
 }`;
-const pathBefore = '__tests__/__fixtures__/before.json';
-const pathAfter = '__tests__/__fixtures__/after.json';
-
-test('find difference in file', () => {
+test('find difference in files', () => {
   expect(makeDiff(pathBefore, pathAfter)).toBe(answer1);
 });
 
 const answer2 = '{\n}';
-const pathEmtyFile = '__tests__/__fixtures__/empty.json';
-test('find difference in emtys file', () => {
-  expect(makeDiff(pathEmtyFile, pathEmtyFile)).toBe(answer2);
+test('find difference in emties files', () => {
+  expect(makeDiff(pathEmptyFile, pathEmptyFile)).toBe(answer2);
 });
 
 const answer3 = `{
@@ -62,5 +35,14 @@ const answer4 = `{
   - proxy: 123.234.53.22
 }`;
 test('find difference in the file and emptyFile', () => {
-  expect(makeDiff(pathBefore, pathEmtyFile)).toBe(answer4);
+  expect(makeDiff(pathBefore, pathEmptyFile)).toBe(answer4);
+});
+
+const answer5 = `{
+  + timeout: 20
+  + verbose: true
+  + host: hexlet.io
+}`;
+test('find difference in the emptyFile and file', () => {
+  expect(makeDiff(pathEmptyFile, pathAfter)).toBe(answer5);
 });
