@@ -46,6 +46,8 @@
   "dependencies": {
     "commander": "*",
     "fs": "*",
-    "lodash": "*"
+    "lodash": "*",
+    "js-yaml": "*",
+    "path": "*"
   }
 }

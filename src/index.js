@@ -1,12 +1,26 @@
 import fs from 'fs';
 import _ from 'lodash';
+import yaml from 'js-yaml';
+import path from 'path';
 
 const eol = '\n';
 const intend = '  ';
 
+const parseConfigFile = (pathToFile, dataFile) => {
+  const parseMethods = {
+    '.json': f => JSON.parse(f),
+    '.yaml': f => yaml.safeLoad(f),
+  };
+  const extention = path.extname(pathToFile);
+  if (extention in parseMethods) {
+    return parseMethods[extention](dataFile);
+  }
+  return 'error parsing method!';
+};
+
 const readConfigFile = (pathToFile) => {
   const dataFile = fs.readFileSync(pathToFile, 'utf-8');
-  return JSON.parse(dataFile);
+  return parseConfigFile(pathToFile, dataFile);
 };
 
 const makeRow = (property, obj, sign) =>
