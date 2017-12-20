@@ -13,16 +13,16 @@ const makeRow = (property, obj, sign) =>
   `${intend}${sign} ${property}: ${obj[property]}${eol}`;
 
 const isNewProperty = (objBefore, objAfter, property) =>
-  (objAfter[property] && !objBefore[property]);
+  !(property in objBefore);
 
 const isEqualProperty = (objBefore, objAfter, property) =>
   (objBefore[property] === objAfter[property]);
 
 const isMofifiedProperty = (objBefore, objAfter, property) =>
-  (objBefore[property] && objAfter[property] && objBefore[property] !== objAfter[property]);
+  (property in objBefore && property in objAfter && objBefore[property] !== objAfter[property]);
 
 const isDeletedProperty = (objBefore, objAfter, property) =>
-  (objBefore[property] && !objAfter[property]);
+  !(property in objAfter);
 
 export const makeDiff = (configBefore, configAfter) => {
   const objBefore = readConfigFile(configBefore);
@@ -43,19 +43,8 @@ export const makeDiff = (configBefore, configAfter) => {
     }
     return acc;
   }, '');
-  return `{${eol}${output}}`;
+  return `{\n${output}}`;
 };
-
-// for tests:
-export {
-  isDeletedProperty,
-  isMofifiedProperty,
-  isEqualProperty,
-  isNewProperty,
-  makeRow,
-  readConfigFile,
-};
-// tests
 
 export default (filePathBefore, filePathAfter) =>
   makeDiff(filePathBefore, filePathAfter);
