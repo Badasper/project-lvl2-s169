@@ -2,14 +2,16 @@ import fs from 'fs';
 import _ from 'lodash';
 import yaml from 'js-yaml';
 import path from 'path';
+import ini from 'ini';
 
 const eol = '\n';
 const intend = '  ';
 
 const parseConfigFile = (pathToFile, dataFile) => {
   const parseMethods = {
-    '.json': f => JSON.parse(f),
-    '.yaml': f => yaml.safeLoad(f),
+    '.json': JSON.parse,
+    '.yaml': yaml.safeLoad,
+    '.ini': ini.parse,
   };
   const extention = path.extname(pathToFile);
   if (extention in parseMethods) {

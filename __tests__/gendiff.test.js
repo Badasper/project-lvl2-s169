@@ -1,12 +1,8 @@
 import { makeDiff } from '../src';
 
-const pathBeforeJson = '__tests__/__fixtures__/before.json';
-const pathAfterJson = '__tests__/__fixtures__/after.json';
-const pathEmptyFileJson = '__tests__/__fixtures__/empty.json';
-
-const pathBeforeYaml = '__tests__/__fixtures__/before.yaml';
-const pathAfterYaml = '__tests__/__fixtures__/after.yaml';
-const pathEmptyFileYaml = '__tests__/__fixtures__/empty.yaml';
+const pathBefore = '__tests__/__fixtures__/before';
+const pathAfter = '__tests__/__fixtures__/after';
+const pathEmptyFile = '__tests__/__fixtures__/empty';
 
 const expectedTowFiles = `{
     host: hexlet.io
@@ -32,37 +28,64 @@ const expectedEmtyFileFile = `{
   + host: hexlet.io
 }`;
 describe('test JSON file', () => {
-  test('find difference in files JSON', () => {
+  const pathBeforeJson = `${pathBefore}.json`;
+  const pathAfterJson = `${pathAfter}.json`;
+  const pathEmptyFileJson = `${pathEmptyFile}.json`;
+  test('find difference in files', () => {
     expect(makeDiff(pathBeforeJson, pathAfterJson)).toBe(expectedTowFiles);
   });
-  test('find difference in empties files JSON', () => {
+  test('find difference in empties files', () => {
     expect(makeDiff(pathEmptyFileJson, pathEmptyFileJson)).toBe(expectedEmptyFiles);
   });
-  test('find difference in the same file JSON', () => {
+  test('find difference in the same file', () => {
     expect(makeDiff(pathBeforeJson, pathBeforeJson)).toBe(expectedSameFiles);
   });
-  test('find difference in the file and emptyFile JSON', () => {
+  test('find difference in the file and emptyFile', () => {
     expect(makeDiff(pathBeforeJson, pathEmptyFileJson)).toBe(expectedFileEmptyFile);
   });
-  test('find difference in the emptyFile and file JSON', () => {
+  test('find difference in the emptyFile and file', () => {
     expect(makeDiff(pathEmptyFileJson, pathAfterJson)).toBe(expectedEmtyFileFile);
   });
 });
 
 describe('test YAML file', () => {
-  test('find difference in files YAML', () => {
+  const pathBeforeYaml = `${pathBefore}.yaml`;
+  const pathAfterYaml = `${pathAfter}.yaml`;
+  const pathEmptyFileYaml = `${pathEmptyFile}.yaml`;
+  test('find difference in files', () => {
     expect(makeDiff(pathBeforeYaml, pathAfterYaml)).toBe(expectedTowFiles);
   });
-  test('find difference in empties files YAML', () => {
+  test('find difference in empties files', () => {
     expect(makeDiff(pathEmptyFileYaml, pathEmptyFileYaml)).toBe(expectedEmptyFiles);
   });
-  test('find difference in the same file YAML', () => {
+  test('find difference in the same file', () => {
     expect(makeDiff(pathBeforeYaml, pathBeforeYaml)).toBe(expectedSameFiles);
   });
-  test('find difference in the file and emptyFile YAML', () => {
+  test('find difference in the file and emptyFile', () => {
     expect(makeDiff(pathBeforeYaml, pathEmptyFileYaml)).toBe(expectedFileEmptyFile);
   });
-  test('find difference in the emptyFile and file YAML', () => {
+  test('find difference in the emptyFile and file', () => {
     expect(makeDiff(pathEmptyFileYaml, pathAfterYaml)).toBe(expectedEmtyFileFile);
+  });
+});
+
+describe('test INI file', () => {
+  const pathBeforeIni = `${pathBefore}.ini`;
+  const pathAfterIni = `${pathAfter}.ini`;
+  const pathEmptyFileIni = `${pathEmptyFile}.ini`;
+  test('find difference in files', () => {
+    expect(makeDiff(pathBeforeIni, pathAfterIni)).toBe(expectedTowFiles);
+  });
+  test('find difference in empties files', () => {
+    expect(makeDiff(pathEmptyFileIni, pathEmptyFileIni)).toBe(expectedEmptyFiles);
+  });
+  test('find difference in the same file', () => {
+    expect(makeDiff(pathBeforeIni, pathBeforeIni)).toBe(expectedSameFiles);
+  });
+  test('find difference in the file and emptyFile', () => {
+    expect(makeDiff(pathBeforeIni, pathEmptyFileIni)).toBe(expectedFileEmptyFile);
+  });
+  test('find difference in the emptyFile and file', () => {
+    expect(makeDiff(pathEmptyFileIni, pathAfterIni)).toBe(expectedEmtyFileFile);
   });
 });
