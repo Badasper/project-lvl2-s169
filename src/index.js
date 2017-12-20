@@ -6,13 +6,13 @@ import ini from 'ini';
 
 const eol = '\n';
 const intend = '  ';
-
-const parseConfigFile = (pathToFile, dataFile) => {
-  const parseMethods = {
+const parseMethods = {
     '.json': JSON.parse,
     '.yaml': yaml.safeLoad,
     '.ini': ini.parse,
-  };
+};
+
+const parseConfigFile = (pathToFile, dataFile) => {
   const extention = path.extname(pathToFile);
   if (extention in parseMethods) {
     return parseMethods[extention](dataFile);
