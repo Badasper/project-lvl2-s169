@@ -13,7 +13,7 @@ lint:
 	npm run eslint .
 
 test:
-	npm test
+	npm test -- --coverage
 
 watch:
 	npm test -- --watchAll

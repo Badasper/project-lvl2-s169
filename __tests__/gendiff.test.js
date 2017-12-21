@@ -27,6 +27,7 @@ const expectedEmtyFileFile = `{
   + verbose: true
   + host: hexlet.io
 }`;
+
 describe('test JSON file', () => {
   const pathBeforeJson = `${pathBefore}.json`;
   const pathAfterJson = `${pathAfter}.json`;

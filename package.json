@@ -1,6 +1,6 @@
 {
   "name": "hexlet-level2-ya-package",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "my hexlet course 2",
   "main": "dist/index.js",
   "scripts": {
@@ -26,7 +26,11 @@
     "url": "https://github.com/Badasper/project-lvl2-s169/issues"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageReporters": [
+      "html",
+      "text"
+    ]
   },
   "homepage": "https://github.com/Badasper/project-lvl2-s169#readme",
   "devDependencies": {
