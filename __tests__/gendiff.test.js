@@ -1,4 +1,4 @@
-import { makeDiff } from '../src';
+import makeDiff from '../src';
 
 const pathBefore = '__tests__/__fixtures__/before';
 const pathAfter = '__tests__/__fixtures__/after';
