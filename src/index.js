@@ -126,7 +126,7 @@ const astToComplexString = (ast, level = 1) => {
   return `${startBlock}${eol}${outString}${intend.repeat(level - 1)}${endBlock}`;
 };
 
-const typeSelectorFlat = {
+const typeSelectorPlain = {
   new: (element, parent) => {
     if (_.isObject(element.configAfter)) {
       return `Property '${parent}${element.property}' was added with complex value`;
@@ -143,13 +143,13 @@ const typeSelectorFlat = {
     `Property '${parent}${element.property}' was updated. From '${element.configBefore}' to '${element.configAfter}'`,
 };
 
-const astToFlatString = (ast, parentProperty = '') => ast.map((element) => {
-  const parent = element.children ? astToFlatString(element.children, `${parentProperty}${element.property}.`) : parentProperty;
-  return typeSelectorFlat[element.type](element, parent);
+const astToPlainString = (ast, parentProperty = '') => ast.map((element) => {
+  const parent = element.children ? astToPlainString(element.children, `${parentProperty}${element.property}.`) : parentProperty;
+  return typeSelectorPlain[element.type](element, parent);
 }).filter(element => element).join('\n');
 
 const outputFormats = {
-  flat: astToFlatString,
+  plain: astToPlainString,
   complex: astToComplexString,
 };
 

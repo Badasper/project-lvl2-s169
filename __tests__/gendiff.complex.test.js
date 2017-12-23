@@ -69,6 +69,6 @@ describe('test JSON file, flat output', () => {
   const pathBeforeJson = `${pathBefore}Flat.json`;
   const pathAfterJson = `${pathAfter}Flat.json`;
   test('find difference in complex files', () => {
-    expect(makeDiff(pathBeforeJson, pathAfterJson, 'flat')).toBe(ecpectFlat);
+    expect(makeDiff(pathBeforeJson, pathAfterJson, 'plain')).toBe(ecpectFlat);
   });
 });
