@@ -1,0 +1,24 @@
+{
+  "timeout": 20,
+  "verbose": true,
+  "common": {
+    "setting1": "Value 1",
+    "setting2": 200,
+    "setting3": true,
+    "setting6": {
+      "key": "value"
+    },
+    "sites": {
+      "default": "ya.ru",
+      "base": "hexlet.io"
+    }
+  },
+
+  "group1": {
+    "foo": "bar",
+    "baz": "bas"
+  },
+  "group2": {
+    "abc": "12345"
+  }
+}

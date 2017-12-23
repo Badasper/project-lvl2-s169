@@ -41,7 +41,7 @@ const isDeletedProperty = (objBefore, objAfter, property) =>
 
 const makeAst = (objBefore, objAfter) => {
   const properties = _.union(Object.keys(objBefore), Object.keys(objAfter));
-  const output = properties.map((property) => {
+  const outputAst = properties.map((property) => {
     if (isNewProperty(objBefore, objAfter, property)) {
       return {
         property,
@@ -83,7 +83,7 @@ const makeAst = (objBefore, objAfter) => {
     }
     return {};
   });
-  return output;
+  return outputAst;
 };
 
 const eol = '\n';
@@ -91,60 +91,72 @@ const intend = '  ';
 const startBlock = '{';
 const endBlock = '}';
 
-const makeRow = (property, value, sign, level) => {
-  const template = `${intend.repeat(level)}${sign} ${property}: ${value}${eol}`;
-  return template;
-};
+const makeRow = (property, value, sign, level) => `${intend.repeat(level)}${sign} ${property}: ${value}${eol}`;
 
-const prefix = {
-  new: '+',
-  deleted: '-',
-  modified: ['-', '+'],
-  complexModified: ' ',
-  equal: ' ',
-};
-
-const elementToString = (obj, level) => {
+const elementToComplexString = (obj, level) => {
   if (!_.isObject(obj)) {
     return obj;
   }
   const properties = Object.keys(obj);
-  const out = properties.reduce((acc, element) => {
-    const row = makeRow(element, elementToString(obj[element], level + 1), ' ', level + 2);
+  const outRow = properties.reduce((acc, element) => {
+    const row = makeRow(element, elementToComplexString(obj[element], level + 1), ' ', level + 2);
     return `${acc}${row}`;
   }, '');
-  return `${startBlock}${eol}${out}${intend.repeat(level + 1)}${endBlock}`;
+  return `${startBlock}${eol}${outRow}${intend.repeat(level + 1)}${endBlock}`;
 };
 
-const astToString = (ast) => {
-  const iter = (localAst, level) => {
-    const out = localAst.reduce((acc, element) => {
-      const sign = prefix[element.type];
-      if (element.type === 'complexModified') {
-        const astRow = makeRow(element.property, iter(element.children, level + 2), sign, level);
-        return `${acc}${astRow}`;
-      }
-      if (element.type === 'modified') {
-        const signBefore = sign[0];
-        const signAfter = sign[1];
-        const valueAfter = elementToString(element.configAfter, level);
-        const valueBefore = elementToString(element.configBefore, level);
-        const rowAfter = makeRow(element.property, valueAfter, signAfter, level);
-        const rowBefore = makeRow(element.property, valueBefore, signBefore, level);
-        return `${acc}${rowAfter}${rowBefore}`;
-      }
-      const value = element.configBefore ? element.configBefore : element.configAfter;
-      return `${acc}${makeRow(element.property, elementToString(value, level), sign, level)}`;
-    }, '');
-    return `${startBlock}${eol}${out}${intend.repeat(level - 1)}${endBlock}`;
-  };
-  return iter(ast, 1);
+const typeSelectorComplex = {
+  new: (element, level) => makeRow(element.property, elementToComplexString(element.configAfter, level), '+', level),
+  deleted: (element, level) => makeRow(element.property, elementToComplexString(element.configBefore, level), '-', level),
+  equal: (element, level) => makeRow(element.property, elementToComplexString(element.configBefore, level), ' ', level),
+  complexModified: (element, level, value) => makeRow(element.property, value, ' ', level),
+  modified: (element, level) => {
+    const rowAfter = makeRow(element.property, elementToComplexString(element.configAfter, level), '+', level);
+    const rowBefore = makeRow(element.property, elementToComplexString(element.configBefore, level), '-', level);
+    return `${rowAfter}${rowBefore}`;
+  },
 };
 
-const makeDiff = (configBefore, configAfter) => {
+const astToComplexString = (ast, level = 1) => {
+  const outString = ast.reduce((acc, element) => {
+    const value = element.children ? astToComplexString(element.children, level + 2) : '';
+    const astRow = typeSelectorComplex[element.type](element, level, value);
+    return `${acc}${astRow}`;
+  }, '');
+  return `${startBlock}${eol}${outString}${intend.repeat(level - 1)}${endBlock}`;
+};
+
+const typeSelectorFlat = {
+  new: (element, parent) => {
+    if (_.isObject(element.configAfter)) {
+      return `Property '${parent}${element.property}' was added with complex value`;
+    }
+    if (typeof element.configAfter === 'string') {
+      return `Property '${parent}${element.property}' was added with '${element.configAfter}'`;
+    }
+    return `Property '${parent}${element.property}' was added with value: ${element.configAfter}`;
+  },
+  deleted: (element, parent) => `Property '${parent}${element.property}' was removed`,
+  equal: () => '',
+  complexModified: (element, parent) => parent,
+  modified: (element, parent) =>
+    `Property '${parent}${element.property}' was updated. From '${element.configBefore}' to '${element.configAfter}'`,
+};
+
+const astToFlatString = (ast, parentProperty = '') => ast.map((element) => {
+  const parent = element.children ? astToFlatString(element.children, `${parentProperty}${element.property}.`) : parentProperty;
+  return typeSelectorFlat[element.type](element, parent);
+}).filter(element => element).join('\n');
+
+const formatOutput = {
+  flat: astToFlatString,
+  complex: astToComplexString,
+};
+
+const makeDiff = (configBefore, configAfter, format = 'complex') => {
   const objBefore = readConfigFile(configBefore);
   const objAfter = readConfigFile(configAfter);
-  return astToString(makeAst(objBefore, objAfter));
+  return formatOutput[format](makeAst(objBefore, objAfter));
 };
 
 export default makeDiff;

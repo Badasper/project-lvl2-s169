@@ -52,3 +52,23 @@ describe('test YAML file', () => {
     expect(makeDiff(pathBeforeJson, pathAfterJson)).toBe(expectedTowFiles);
   });
 });
+
+const ecpectFlat = `Property 'timeout' was updated. From '50' to '20'
+Property 'proxy' was removed
+Property 'common.setting4' was removed
+Property 'common.setting5' was removed
+Property 'common.sites.base' was added with 'hexlet.io'
+Property 'common.setting2' was added with value: 200
+Property 'common.setting6' was added with complex value
+Property 'group1.baz' was updated. From 'bars' to 'bas'
+Property 'group3' was removed
+Property 'verbose' was added with value: true
+Property 'group2' was added with complex value`;
+
+describe('test JSON file, flat output', () => {
+  const pathBeforeJson = `${pathBefore}Flat.json`;
+  const pathAfterJson = `${pathAfter}Flat.json`;
+  test('find difference in complex files', () => {
+    expect(makeDiff(pathBeforeJson, pathAfterJson, 'flat')).toBe(ecpectFlat);
+  });
+});

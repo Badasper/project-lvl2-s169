@@ -2,9 +2,7 @@ install:
 	npm install 
 
 gendiff:
-	npm run babel-node -- src/bin/gendiff.js -V
-	npm run babel-node -- src/bin/gendiff.js -h
-	npm run babel-node -- src/bin/gendiff.js __tests__/__fixtures__/before.json __tests__/__fixtures__/after.json
+	npm run babel-node -- src/bin/gendiff.js --format flat __tests__/__fixtures__/before.json __tests__/__fixtures__/after.json
 
 publish:
 	npm publish
@@ -17,3 +15,6 @@ test:
 
 watch:
 	npm test -- --watchAll
+
+.PHONY: test install
+	
