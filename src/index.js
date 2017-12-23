@@ -41,7 +41,7 @@ const isDeletedProperty = (objBefore, objAfter, property) =>
 
 const makeAst = (objBefore, objAfter) => {
   const properties = _.union(Object.keys(objBefore), Object.keys(objAfter));
-  const outputAst = properties.map((property) => {
+  return properties.map((property) => {
     if (isNewProperty(objBefore, objAfter, property)) {
       return {
         property,
@@ -83,7 +83,6 @@ const makeAst = (objBefore, objAfter) => {
     }
     return {};
   });
-  return outputAst;
 };
 
 const eol = '\n';
