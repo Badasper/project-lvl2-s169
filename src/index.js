@@ -1,22 +1,8 @@
 import fs from 'fs';
 import _ from 'lodash';
-import yaml from 'js-yaml';
 import path from 'path';
-import ini from 'ini';
-
-const parseMethods = {
-  '.json': JSON.parse,
-  '.yaml': yaml.safeLoad,
-  '.yml': yaml.safeLoad,
-  '.ini': ini.parse,
-};
-
-const parseConfigFile = (extention, dataFile) => {
-  if (extention in parseMethods) {
-    return parseMethods[extention](dataFile);
-  }
-  return 'error';
-};
+import getRender from './renders';
+import parseConfigFile from './parser';
 
 const readConfigFile = (pathToFile) => {
   const dataFile = fs.readFileSync(pathToFile, 'utf-8');
@@ -24,7 +10,7 @@ const readConfigFile = (pathToFile) => {
   return parseConfigFile(extention, dataFile);
 };
 
-const isNewProperty = (objBefore, objAfter, property) =>
+const isaddedProperty = (objBefore, objAfter, property) =>
   !(property in objBefore);
 
 const isEqualProperty = (objBefore, objAfter, property) =>
@@ -43,25 +29,25 @@ const isDeletedProperty = (objBefore, objAfter, property) =>
 const makeAst = (objBefore, objAfter) => {
   const properties = _.union(Object.keys(objBefore), Object.keys(objAfter));
   return properties.map((property) => {
-    if (isNewProperty(objBefore, objAfter, property)) {
+    if (isaddedProperty(objBefore, objAfter, property)) {
       return {
         property,
-        type: 'new',
-        configAfter: objAfter[property],
+        type: 'added',
+        valueAfter: objAfter[property],
       };
     }
     if (isDeletedProperty(objBefore, objAfter, property)) {
       return {
         property,
         type: 'deleted',
-        configBefore: objBefore[property],
+        valueBefore: objBefore[property],
       };
     }
     if (isEqualProperty(objBefore, objAfter, property)) {
       return {
         property,
         type: 'equal',
-        configBefore: objBefore[property],
+        valueBefore: objBefore[property],
       };
     }
     if (isModfifiedProperty(objBefore, objAfter, property)) {
@@ -71,95 +57,26 @@ const makeAst = (objBefore, objAfter) => {
         const obj2 = objAfter[property];
         return {
           property,
-          type: 'complexModified',
+          type: 'nested',
           children: makeAst(obj1, obj2),
         };
       }
       return {
         property,
         type: 'modified',
-        configBefore: objBefore[property],
-        configAfter: objAfter[property],
+        valueBefore: objBefore[property],
+        valueAfter: objAfter[property],
       };
     }
     return {};
   });
 };
 
-const eol = '\n';
-const intend = '  ';
-const startBlock = '{';
-const endBlock = '}';
-
-const makeRow = (property, value, sign, level) => `${intend.repeat(level)}${sign} ${property}: ${value}${eol}`;
-
-const elementToComplexString = (obj, level) => {
-  if (!_.isObject(obj)) {
-    return obj;
-  }
-  const properties = Object.keys(obj);
-  const outRow = properties.reduce((acc, element) => {
-    const row = makeRow(element, elementToComplexString(obj[element], level + 1), ' ', level + 2);
-    return `${acc}${row}`;
-  }, '');
-  return `${startBlock}${eol}${outRow}${intend.repeat(level + 1)}${endBlock}`;
-};
-
-const typeSelectorComplex = {
-  new: (element, level) => makeRow(element.property, elementToComplexString(element.configAfter, level), '+', level),
-  deleted: (element, level) => makeRow(element.property, elementToComplexString(element.configBefore, level), '-', level),
-  equal: (element, level) => makeRow(element.property, elementToComplexString(element.configBefore, level), ' ', level),
-  complexModified: (element, level, value) => makeRow(element.property, value, ' ', level),
-  modified: (element, level) => {
-    const rowAfter = makeRow(element.property, elementToComplexString(element.configAfter, level), '+', level);
-    const rowBefore = makeRow(element.property, elementToComplexString(element.configBefore, level), '-', level);
-    return `${rowAfter}${rowBefore}`;
-  },
-};
-
-const astToComplexString = (ast, level = 1) => {
-  const outString = ast.reduce((acc, element) => {
-    const value = element.children ? astToComplexString(element.children, level + 2) : '';
-    const astRow = typeSelectorComplex[element.type](element, level, value);
-    return `${acc}${astRow}`;
-  }, '');
-  return `${startBlock}${eol}${outString}${intend.repeat(level - 1)}${endBlock}`;
-};
-
-const typeSelectorPlain = {
-  new: (element, parent) => {
-    if (_.isObject(element.configAfter)) {
-      return `Property '${parent}${element.property}' was added with complex value`;
-    }
-    if (typeof element.configAfter === 'string') {
-      return `Property '${parent}${element.property}' was added with '${element.configAfter}'`;
-    }
-    return `Property '${parent}${element.property}' was added with value: ${element.configAfter}`;
-  },
-  deleted: (element, parent) => `Property '${parent}${element.property}' was removed`,
-  equal: () => '',
-  complexModified: (element, parent) => parent,
-  modified: (element, parent) =>
-    `Property '${parent}${element.property}' was updated. From '${element.configBefore}' to '${element.configAfter}'`,
-};
-
-const astToPlainString = (ast, parentProperty = '') => ast.map((element) => {
-  const parent = element.children ? astToPlainString(element.children, `${parentProperty}${element.property}.`) : parentProperty;
-  return typeSelectorPlain[element.type](element, parent);
-}).filter(element => element).join('\n');
-
-const astToJson = ast => JSON.stringify(ast, null, 4);
-
-const outputFormats = {
-  plain: astToPlainString,
-  complex: astToComplexString,
-  json: astToJson,
-};
-
-const makeDiff = (configBefore, configAfter, format = 'complex') => {
-  const objBefore = readConfigFile(configBefore);
-  const objAfter = readConfigFile(configAfter);
-  return outputFormats[format](makeAst(objBefore, objAfter));
+const makeDiff = (valueBefore, valueAfter, format = 'complex') => {
+  const objBefore = readConfigFile(valueBefore);
+  const objAfter = readConfigFile(valueAfter);
+  const render = getRender(format);
+  return render(makeAst(objBefore, objAfter));
 };
 
 export default makeDiff;

@@ -6,39 +6,39 @@ const pathAfter = '__tests__/__fixtures__/afterComplex';
 const expectedTowFiles = `[
     {
         "property": "common",
-        "type": "complexModified",
+        "type": "nested",
         "children": [
             {
                 "property": "setting1",
                 "type": "equal",
-                "configBefore": "Value 1"
+                "valueBefore": "Value 1"
             },
             {
                 "property": "setting2",
                 "type": "deleted",
-                "configBefore": "200"
+                "valueBefore": "200"
             },
             {
                 "property": "setting3",
                 "type": "equal",
-                "configBefore": true
+                "valueBefore": true
             },
             {
                 "property": "setting6",
                 "type": "deleted",
-                "configBefore": {
+                "valueBefore": {
                     "key": "value"
                 }
             },
             {
                 "property": "setting4",
-                "type": "new",
-                "configAfter": "blah blah"
+                "type": "added",
+                "valueAfter": "blah blah"
             },
             {
                 "property": "setting5",
-                "type": "new",
-                "configAfter": {
+                "type": "added",
+                "valueAfter": {
                     "key5": "value5"
                 }
             }
@@ -46,32 +46,32 @@ const expectedTowFiles = `[
     },
     {
         "property": "group1",
-        "type": "complexModified",
+        "type": "nested",
         "children": [
             {
                 "property": "baz",
                 "type": "modified",
-                "configBefore": "bas",
-                "configAfter": "bars"
+                "valueBefore": "bas",
+                "valueAfter": "bars"
             },
             {
                 "property": "foo",
                 "type": "equal",
-                "configBefore": "bar"
+                "valueBefore": "bar"
             }
         ]
     },
     {
         "property": "group2",
         "type": "deleted",
-        "configBefore": {
+        "valueBefore": {
             "abc": "12345"
         }
     },
     {
         "property": "group3",
-        "type": "new",
-        "configAfter": {
+        "type": "added",
+        "valueAfter": {
             "fee": "100500"
         }
     }
