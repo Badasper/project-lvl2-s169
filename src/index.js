@@ -7,6 +7,7 @@ import ini from 'ini';
 const parseMethods = {
   '.json': JSON.parse,
   '.yaml': yaml.safeLoad,
+  '.yml': yaml.safeLoad,
   '.ini': ini.parse,
 };
 
@@ -147,9 +148,12 @@ const astToPlainString = (ast, parentProperty = '') => ast.map((element) => {
   return typeSelectorPlain[element.type](element, parent);
 }).filter(element => element).join('\n');
 
+const astToJson = ast => JSON.stringify(ast, null, 4);
+
 const outputFormats = {
   plain: astToPlainString,
   complex: astToComplexString,
+  json: astToJson,
 };
 
 const makeDiff = (configBefore, configAfter, format = 'complex') => {
