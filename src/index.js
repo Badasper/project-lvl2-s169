@@ -148,7 +148,7 @@ const astToFlatString = (ast, parentProperty = '') => ast.map((element) => {
   return typeSelectorFlat[element.type](element, parent);
 }).filter(element => element).join('\n');
 
-const formatOutput = {
+const outputFormats = {
   flat: astToFlatString,
   complex: astToComplexString,
 };
@@ -156,7 +156,7 @@ const formatOutput = {
 const makeDiff = (configBefore, configAfter, format = 'complex') => {
   const objBefore = readConfigFile(configBefore);
   const objAfter = readConfigFile(configAfter);
-  return formatOutput[format](makeAst(objBefore, objAfter));
+  return outputFormats[format](makeAst(objBefore, objAfter));
 };
 
 export default makeDiff;
