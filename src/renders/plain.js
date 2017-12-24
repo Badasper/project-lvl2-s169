@@ -5,13 +5,8 @@ const splitter = '.';
 
 const typeMapping = {
   added: (element, parent) => {
-    if (_.isObject(element.valueAfter)) {
-      return `Property '${parent}${element.property}' was added with complex value`;
-    }
-    if (typeof element.valueAfter === 'string') {
-      return `Property '${parent}${element.property}' was added with '${element.valueAfter}'`;
-    }
-    return `Property '${parent}${element.property}' was added with value: ${element.valueAfter}`;
+    const value = _.isObject(element.valueAfter) ? 'complex value' : `value: ${element.valueAfter}`;
+    return `Property '${parent}${element.property}' was added with ${value}`;
   },
   deleted: (element, parent) => `Property '${parent}${element.property}' was removed`,
   equal: () => '',

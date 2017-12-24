@@ -57,7 +57,7 @@ const ecpectFlat = `Property 'timeout' was updated. From '50' to '20'
 Property 'proxy' was removed
 Property 'common.setting4' was removed
 Property 'common.setting5' was removed
-Property 'common.sites.base' was added with 'hexlet.io'
+Property 'common.sites.base' was added with value: hexlet.io
 Property 'common.setting2' was added with value: 200
 Property 'common.setting6' was added with complex value
 Property 'group1.baz' was updated. From 'bars' to 'bas'
