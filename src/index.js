@@ -54,7 +54,7 @@ const makeDiff = (configFileBefore, configFileAfter, format = 'complex') => {
   const objBefore = readConfigFile(configFileBefore);
   const objAfter = readConfigFile(configFileAfter);
   const render = getRender(format);
-  return render(makeAst(objBefore, objAfter));
+  return render.toString(makeAst(objBefore, objAfter));
 };
 
 export default makeDiff;
