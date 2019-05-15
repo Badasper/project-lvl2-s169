@@ -11,7 +11,7 @@ const expectedTowFiles = `{
   - proxy: 123.234.53.22
   + verbose: true
 }`;
-const expectedEmptyFiles = '{\n\n}';
+const expectedEmptyFiles = '{\n}';
 const expectedSameFiles = `{
     host: hexlet.io
     timeout: 50

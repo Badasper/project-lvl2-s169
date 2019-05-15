@@ -3,6 +3,10 @@ import _ from 'lodash';
 const eol = '\n';
 const splitter = '.';
 
+const flatten = list => list.reduce((acc, elem) =>
+  (Array.isArray(elem) ? [...acc, ...flatten(elem)] : [...acc, elem]), []);
+
+
 const astToString = (ast, parents = []) => {
   const typeMapping = {
     added: (element, property) => {
@@ -15,9 +19,10 @@ const astToString = (ast, parents = []) => {
     modified: (element, property) =>
       `Property '${property}' was updated. From '${element.valueBefore}' to '${element.valueAfter}'`,
   };
-  return ast.map(element =>
+  const list = ast.map(element =>
     typeMapping[element.type](element, [...parents, element.property].join(splitter)))
-    .filter(el => el).join(eol);
+    .filter(el => el);
+  return flatten(list);
 };
 
-export default ast => astToString(ast);
+export default ast => astToString(ast).join(eol);

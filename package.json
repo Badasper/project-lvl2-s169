@@ -1,7 +1,7 @@
 {
-  "name": "hexlet-level2-ya-package",
+  "name": "hexlet-level2-diff-ya",
   "version": "0.8.0",
-  "description": "my hexlet course 2",
+  "description": "diff two config files",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
@@ -26,23 +26,21 @@
     "url": "https://github.com/Badasper/project-lvl2-s169/issues"
   },
   "jest": {
-    "testEnvironment": "node",
-    "coverageReporters": [
-      "html",
-      "text"
-    ]
+    "testEnvironment": "node"
   },
   "homepage": "https://github.com/Badasper/project-lvl2-s169#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.2",
-    "babel-jest": "*",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "eslint": "^4.13.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-core": "^7.0.0-0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "eslint": "*",
+    "eslint-config-airbnb-base": "*",
+    "eslint-plugin-import": "*",
     "eslint-plugin-jest": "*",
     "jest": "*",
     "jest-cli": "*"
