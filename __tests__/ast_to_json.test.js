@@ -11,7 +11,8 @@ const expectedTowFiles = `[
             {
                 "property": "setting1",
                 "type": "equal",
-                "valueBefore": "Value 1"
+                "valueBefore": "Value 1",
+                "valueAfter": "Value 1"
             },
             {
                 "property": "setting2",
@@ -21,7 +22,8 @@ const expectedTowFiles = `[
             {
                 "property": "setting3",
                 "type": "equal",
-                "valueBefore": true
+                "valueBefore": true,
+                "valueAfter": true
             },
             {
                 "property": "setting6",
@@ -57,7 +59,8 @@ const expectedTowFiles = `[
             {
                 "property": "foo",
                 "type": "equal",
-                "valueBefore": "bar"
+                "valueBefore": "bar",
+                "valueAfter": "bar"
             }
         ]
     },
