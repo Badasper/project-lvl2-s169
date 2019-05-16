@@ -10,33 +10,28 @@ const readConfigFile = (pathToFile) => {
   return parseConfigFile(extention, dataFile);
 };
 
-const typeOfDiff = (objBefore, objAfter, property) => {
-  const state = {
+const typeOfModification = (objBefore, objAfter, property) => {
+  const stats = {
     added: !(property in objBefore),
     deleted: !(property in objAfter),
     equal: _.isEqual(objBefore[property], objAfter[property]),
     nested: _.isObject(objBefore[property]) && _.isObject(objAfter[property]),
   };
-  return Object.keys(state).filter(el => state[el])[0] || 'modified';
+  const [status] = Object.keys(stats).filter(el => stats[el]);
+  return status || 'modified';
 };
 
 const makeAst = (objBefore, objAfter) => {
   const properties = _.union(Object.keys(objBefore), Object.keys(objAfter));
   return properties.map((property) => {
-    const typeOfModification = typeOfDiff(objBefore, objAfter, property);
-    if (typeOfModification === 'nested') {
-      return {
-        property,
-        type: typeOfModification,
-        children: makeAst(objBefore[property], objAfter[property]),
-      };
+    const type = typeOfModification(objBefore, objAfter, property);
+    const ast = { property, type };
+    const valueBefore = objBefore[property];
+    const valueAfter = objAfter[property];
+    if (type === 'nested') {
+      return { ...ast, children: makeAst(valueBefore, valueAfter) };
     }
-    return {
-      property,
-      type: typeOfModification,
-      valueBefore: objBefore[property],
-      valueAfter: objAfter[property],
-    };
+    return { ...ast, valueBefore, valueAfter };
   });
 };
 
